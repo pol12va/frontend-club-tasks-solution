@@ -116,25 +116,51 @@ suite('Lodash', function() {
                 var result = _.find(collection, function(cur) { return cur.author.name === author; });
                 return getPropertyByPath(result, "author.name") ? true : false;
             };
-        console.log(isAuthor(articles, "Debbie Downer"));
         
         assert.isFalse(isAuthor(articles, 'New Guy'));
         assert.isTrue(isAuthor(articles , 'Debbie Downer'));
     });
 
-    // test('Challenge 7✯✯✯', function(){
-    //     var a = [1];
+    test('Challenge 7✯✯✯', function(){
+        var a = [1],
+            b = [1],
+            newPush;
 
-    //     // your code goes here
-    //     // как видно из примера в массив можно занести лишь первые 2 значения 
-    //     // остальные игнорируются
-    //     // на этот раз без подсказок
+        // your code goes here
+        // как видно из примера в массив можно занести лишь первые 2 значения 
+        // остальные игнорируются
+        // на этот раз без подсказок
 
-    //     a.push(2);
-    //     a.push(3);
-    //     a.push(4);
-    //     a.push(5);
+        newPush = function(number) {
+            var counter = 0;
 
-    //     assert.deepEqual(a, [1, 2, 3]);
-    // });
+            return (function() {
+                if (counter < 2) {
+                    Array.prototype.push.call(this, number);
+                    counter++;
+                    console.log(counter);
+                }
+            }.bind(this)(counter));
+        };
+
+        Object.defineProperty(a, "push", {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: newPush
+        });
+
+        a.push(2);
+        a.push(3);
+        a.push(4);
+        a.push(5);
+
+        b.push(2);
+        b.push(3);
+        b.push(4);
+        b.push(5);
+
+        assert.deepEqual(a, [1, 2, 3]);
+        assert.deepEqual(b, [1, 2, 3, 4 ,5]);
+    });
 });

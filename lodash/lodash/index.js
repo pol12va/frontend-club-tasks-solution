@@ -68,9 +68,10 @@ suite('Lodash', function() {
         // с использованием функций _.filter,_.isibilityNumber, ...
         // * c использованием _.curry
         // ** c использованием _.flow
-        var sumNumbers = _.flow(_.curry(_.filter)(_.isNumber), _.sum);
+        var filterNumbers = _.curry(_.filter)(_.isNumber),
+            sumNumbers = _.flow(filterNumbers, _.sum);
         
-        assert.equal(sumNumbers([1, '2', 3, '4', 5]), 9);
+        assert.equal(sumNumbers([1, '2', 3, '4', 5, 6]), 15);
     });
 
     test('Challenge 5', function(){
@@ -132,16 +133,16 @@ suite('Lodash', function() {
         // на этот раз без подсказок
 
         newPush = function(number) {
-            var counter = 0;
+            var counter = 0,
+                pushWrapper = function(number) {
+                    if (counter < 2) {
+                        Array.prototype.push.call(this, number);
+                        counter++;
+                    }
+                };
 
-            return (function() {
-                if (counter < 2) {
-                    Array.prototype.push.call(this, number);
-                    counter++;
-                    console.log(counter);
-                }
-            }.bind(this)(counter));
-        };
+            return pushWrapper;
+        }();
 
         Object.defineProperty(a, "push", {
             enumerable: false,
@@ -149,6 +150,31 @@ suite('Lodash', function() {
             writable: true,
             value: newPush
         });
+
+        a.push(2);
+        a.push(3);
+        a.push(4);
+        a.push(5);
+
+        b.push(2);
+        b.push(3);
+        b.push(4);
+        b.push(5);
+
+        assert.deepEqual(a, [1, 2, 3]);
+        assert.deepEqual(b, [1, 2, 3, 4 ,5]);
+    });
+
+    test('Challenge 7✯✯✯ Solution #2', function(){
+        var a = [1],
+            b = [1];
+
+        // your code goes here
+        // как видно из примера в массив можно занести лишь первые 2 значения 
+        // остальные игнорируются
+        // на этот раз без подсказок
+
+        _.before(2, a.push);
 
         a.push(2);
         a.push(3);
